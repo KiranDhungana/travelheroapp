@@ -77,8 +77,8 @@ class _MyHomePageState extends State<MyHomePage> {
     print(' I am kiran ');
     try {
       final response =
-          await http.get(Uri.parse('http://127.0.0.1:8000/api/allusers'));
-      print(response);
+          await http.get(Uri.parse("http://10.0.2.2:8000/api/allusers"));
+
       if (response.statusCode == 200) {
         print("okay noe ");
         var jsonResponse = jsonDecode(response.body);
