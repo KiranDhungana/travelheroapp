@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(const MyApp());
@@ -64,81 +65,182 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
   String _data = 'Fetching data...';
   @override
   void initState() {
     super.initState();
-
-    _fetchData();
   }
 
-  Future<void> _fetchData() async {
-    print(' I am kiran ');
-    try {
-      final response =
-          await http.get(Uri.parse('http://127.0.0.1:8000/api/allusers'));
-      print(response);
-      if (response.statusCode == 200) {
-        print("okay noe ");
-        var jsonResponse = jsonDecode(response.body);
-        String fetchedData = jsonResponse.toString();
-        print(fetchedData);
-        print("i am oka");
+  TextEditingController searchcontroller = TextEditingController();
 
-        setState(() {
-          _data = fetchedData;
-        });
+  List<User> userList = [];
+
+  Future<void> searchreq() async {
+    print(searchcontroller.text);
+    var url = Uri.parse('http://10.0.2.2:8000/api/searchbyname');
+    try {
+      var response = await http.post(
+        url,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode({
+          'query': searchcontroller.text,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        print('Response status: ${response.statusCode}');
+        print('Response body: ${response.body}');
       } else {
-        print("error");
-        setState(() {
-          _data = 'Failed to load data.';
-        });
+        throw Exception('Failed to load data');
       }
     } catch (e) {
-      setState(() {
-        _data = 'Failed to make GET request: ${e.toString()}';
-      });
+      print('Caught error: $e');
+    }
+  }
+
+// login reuest code
+  Future<void> loginreq() async {
+    var url = Uri.parse('http://10.0.2.2:8000/api/login');
+    try {
+      var response = await http.post(
+        url,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          'email': 'kirandhungana570@gmail.com',
+          'password': 'nepal123',
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        print('Response status: ${response.statusCode}');
+        print('Response body: ${response.body}');
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      print('Caught error: $e');
+    }
+  }
+
+  // login request code end
+
+  // signup req code
+  Future<void> signupreq() async {
+    var url = Uri.parse('http://10.0.2.2:8000/api/signup');
+
+    try {
+      var response = await http.post(
+        url,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          'name': "Kiran 2",
+          'email': 'kirandhungana69@gmail.com',
+          'password': 'nepal123',
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        print('Response status: ${response.statusCode}');
+        print('Response body: ${response.body}');
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      print('Caught error: $e');
+    }
+  }
+
+// signup req end
+  Future<void> handelchange(val) async {
+    var url = Uri.parse('http://10.0.2.2:8000/api/searchbyname');
+    print(val);
+    try {
+      var response = await http.post(
+        url,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode({
+          'query': val,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        print('Response status: ${response.statusCode}');
+        print('Response body: ${response.body}');
+        var data = json.decode(response.body) as List;
+        setState(() {
+          userList = data.map((item) => User.fromJson(item)).toList();
+        });
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      print('Caught error: $e');
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          TextField(
+            onChanged: (value) => handelchange(value),
+            controller: searchcontroller,
+          ),
+          const Text(
+            'You have pushed the button this many times:',
+          ),
+          Text(
+            "ok",
+            style: Theme.of(context).textTheme.headlineMedium,
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: userList.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(userList[index].name),
+                  subtitle: Text(userList[index].email),
+                );
+              },
             ),
-            Text(
-              "ok",
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
+          )
+        ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _fetchData,
+        onPressed: searchreq,
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ),
+    );
+  }
+}
+
+class User {
+  final int id;
+  final String name;
+  final String email;
+
+  User({required this.id, required this.name, required this.email});
+
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(
+      id: json['id'],
+      name: json['name'],
+      email: json['email'],
     );
   }
 }
