@@ -23,9 +23,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::get("/allusers", [Usercontroller::class, 'getalluser'], );
 Route::post("/signup", [Usercontroller::class, 'signup'], );
-<<<<<<< HEAD
-Route::post("/login", [Usercontroller::class, 'login'], );
-=======
 Route::post("/login", [Usercontroller::class, 'login'], );
 Route::post("/logout", [Usercontroller::class, 'logout'], );
 Route::post("/userprofile", [Usercontroller::class, 'getprofile'], );
@@ -36,4 +33,3 @@ Route::post("/getlocation", [Searchcontroller::class, 'getlocation'], );
 
 // Lising API 
 Route::post("/addlisting", [Listingcontroller::class, 'addlisting'], );
->>>>>>> 53353c71d59e06ec3393305e9182310d0bc934ca
