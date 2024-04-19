@@ -104,10 +104,6 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> loginreq() async {
     var url = Uri.parse('http://10.0.2.2:8000/api/login');
     try {
-<<<<<<< HEAD
-      final response =
-          await http.get(Uri.parse("http://10.0.2.2:8000/api/allusers"));
-=======
       var response = await http.post(
         url,
         headers: <String, String>{
@@ -118,7 +114,6 @@ class _MyHomePageState extends State<MyHomePage> {
           'password': 'nepal123',
         }),
       );
->>>>>>> 53353c71d59e06ec3393305e9182310d0bc934ca
 
       if (response.statusCode == 200) {
         print('Response status: ${response.statusCode}');
