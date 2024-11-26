@@ -1,11 +1,10 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'pages/home.dart';
 import 'pages/login.dart';
 import 'pages/register.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -44,11 +43,11 @@ class _MyAppState extends State<MyApp> {
       ),
       // home: const MyHomePage(title: 'Flutter Demo Home Page'),
       // home: const Home(),
-       routes: {
-      '/': (context) => const Home(),
-      '/login': (context) =>const Login(),
-      '/register': (context) =>const SignUp(),
-    },
+      routes: {
+        '/': (context) => const Home(),
+        '/login': (context) => const Login(),
+        '/register': (context) => const SignUp(),
+      },
     );
   }
 }

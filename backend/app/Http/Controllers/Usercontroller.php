@@ -10,7 +10,8 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
-
+use Tymon\JWTAuth\Facades\JWTAuth;
+use Tymon\JWTAuth\Exceptions\JWTException;
 class Usercontroller extends Controller
 {
     public function getalluser()
@@ -25,13 +26,17 @@ class Usercontroller extends Controller
     {
         $user = new user;
         $name = $req->name;
-        $email = $req->email;
+        $email = $req->email;  
         $password = Hash::make($req->password);
         $user->name = $name;
         $user->email = $email;
         $user->password = $password;
-        $token = Str::random(10);
-        $user->remember_token = $token;
+         $userinfo = User::create([
+            'name' => $name,
+            'email' => $email,
+            'password' => $password,
+        ]);
+        $token =  JWTAuth::fromUser($userinfo);
         $user->save();
 
 
@@ -39,45 +44,39 @@ class Usercontroller extends Controller
             "name" => $name,
             "email" => $email,
             "password" => $password,
-            "Message" => "User accound creted successfully !"
+            "Message" => "User accound creted successfully !",
+            "token"=>$token,
 
         ], 200);
 
     }
-    public function login(Request $req)
+    public function login(Request $request)
     {
-        $validator = Validator::make($req->all(), [
-            'email' => 'required|string|email|max:255',
-            'password' => 'required',
-        ]);
-        if ($validator->fails()) {
-            return response(['errors' => $validator->errors()->all()], 422);
+        $credentials = $request->only('email', 'password');
+    
+        if (!$token = auth()->attempt($credentials)) {
+            return response()->json(['error' => 'Invalid credentials'], 401);
         }
-        $user = User::where('email', $req->email)->first();
-        if ($user) {
-            if (Hash::check($req->password, $user->password)) {
-                $token = Str::random(10);
-                $user->remember_token = $token;
-                $user->save();
-                $response = ['token' => $token];
-                return response($response, 200);
-            } else {
-                $response = ["message" => "Password mismatch"];
-                return response($response, 422);
-            }
-        } else {
-            $response = ["message" => 'User does not exist'];
-            return response($response, 422);
-        }
+    
+        // Get the authenticated user
+        $user = auth()->user();
+    
+        // Generate a token with custom claims
+        $customToken = JWTAuth::claims([
+            'name' => $user->name,
+            'email' => $user->email,
+        ])->fromUser($user);
+    
+        return response()->json(['token' => $customToken]);
     }
     public function logout(Request $request)
     {
         $token = $request->token;
         // $token->revoke();
-        $user = User::where('remember_token', $token)->first(); // Find the user with the name 'John Doe'
+        $user = User::where('remember_token', $token)->first();
         if ($user) {
-            $user->remember_token = ''; // Update the name
-            $user->save(); // Save the changes
+            $user->remember_token = '';
+            $user->save();
         }
 
         $response = ['message' => 'You have been successfully logged out!'];
@@ -87,11 +86,11 @@ class Usercontroller extends Controller
     {
         $token = $req->token;
         // $token->revoke();
-        $user = User::where('remember_token', $token)->first(); // Find the user with the name 'John Doe'
+        $user = User::where('remember_token', $token)->first();
         $userdetail = $user::all();
         if ($user) {
-            $user->remember_token = ''; // Update the name
-            $user->save(); // Save the changes
+            $user->remember_token = '';
+            $user->save();
         }
 
         $response = ['message' => 'You have been successfully logged out!'];

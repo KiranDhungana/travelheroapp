@@ -55,16 +55,16 @@ class _HomeState extends State<Home> {
             //     ),
             //   ),
             // ),
-            decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Colors.blue,
-                Colors.green,
-              ],
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Colors.blue,
+                  Colors.green,
+                ],
+              ),
             ),
-          ),
             child: Center(
               child: Column(
                 // crossAxisAlignment: CrossAxisAlignment.center,
@@ -94,14 +94,17 @@ class _HomeState extends State<Home> {
                   //    ),
                   //    strokeWidth: 7,
                   //  ),
-                  Center(child: Image.asset('images/room.png', height:200, width: 200),),
+                  Center(
+                    child:
+                        Image.asset('images/room.png', height: 200, width: 200),
+                  ),
                   const SizedBox(
                     height: 20,
                   ),
-                  StrokeText(
-                    text: 'Room Finder',
+                  const StrokeText(
+                    text: 'Parking location Finder',
                     textStyle: TextStyle(
-                      fontSize: 50.0,
+                      fontSize: 30.0,
                       fontFamily: 'Pacifico',
                       color: Colors.cyanAccent,
                       letterSpacing: 2.5,
@@ -116,11 +119,11 @@ class _HomeState extends State<Home> {
                     height: 15,
                   ),
                   Text(
-                    'Rooms at Your Fingertips'.toUpperCase(),
-                    style: TextStyle(
+                    'Get Parking Location'.toUpperCase(),
+                    style: const TextStyle(
                       fontSize: 15.0,
                       fontWeight: FontWeight.w700,
-                      color: Color.fromARGB(255, 0, 0,0),
+                      color: Color.fromARGB(255, 0, 0, 0),
                       letterSpacing: 3,
                     ),
                   ),
@@ -131,7 +134,7 @@ class _HomeState extends State<Home> {
                       color: Colors.white,
                     ),
                   ),
-                
+
                   TextButton(
                     style: TextButton.styleFrom(
                       foregroundColor: Colors.white,
@@ -179,19 +182,19 @@ class _HomeState extends State<Home> {
                     // child: Text('LOGIN'),
                   ),
                   GestureDetector(
-      onTap: () {
-        // Handle link click action here
-        print('Link clicked!');
-        Navigator.pushNamed(context, '/login');
-      },
-      child: Text(
-        'Login',
-        style: TextStyle(
-          color: Colors.black,
-          decoration: TextDecoration.underline,
-        ),
-      ),
-    ),
+                    onTap: () {
+                      // Handle link click action here
+                      print('Link clicked!');
+                      Navigator.pushNamed(context, '/login');
+                    },
+                    child: Text(
+                      'Login',
+                      style: TextStyle(
+                        color: Colors.black,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),

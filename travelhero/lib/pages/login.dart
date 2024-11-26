@@ -4,6 +4,7 @@ import 'package:stroke_text/stroke_text.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:travelhero/pages/profilepage.dart';
 
 // import 'package:connectivity_plus/connectivity_plus.dart';
 
@@ -23,7 +24,6 @@ class _LoginState extends State<Login> {
   bool connected = false;
   TextEditingController emailcontroller = TextEditingController();
   TextEditingController passwordcontroller = TextEditingController();
-  late var token;
 
   @override
   void initState() {
@@ -32,8 +32,6 @@ class _LoginState extends State<Login> {
   }
 
   Future<String?> loginreq(String username, String password) async {
-    print(emailcontroller.text);
-    print(passwordcontroller.text);
     var url = Uri.parse('http://10.0.2.2:8000/api/login');
     try {
       var response = await http.post(
@@ -48,7 +46,6 @@ class _LoginState extends State<Login> {
       );
 
       if (response.statusCode == 200) {
-        print('Response status: ${response.statusCode}');
         var data = jsonDecode(response.body);
         // print('Response body: ${response.body}');
         return data['token'];
@@ -138,7 +135,11 @@ class _LoginState extends State<Login> {
                     if (token != null) {
                       await savetoken(token);
                       print('login req successful');
-                      // Navigator.pushReplacementNamed(context, '/home');
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const Profilepage()),
+                      );
                     } else {
                       // Handle login failure
                       ScaffoldMessenger.of(context).showSnackBar(
